@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Revel Pad — Scratch-Off Studio</title>
+<link rel="stylesheet" href="css/studio.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13' fill='%23d9b06a'/><circle cx='16' cy='16' r='13' fill='none' stroke='%2312100c' stroke-width='3'/><path d='M10 16l4 4 8-9' stroke='%2312100c' stroke-width='3' fill='none' stroke-linecap='round'/></svg>">
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <div class="wordmark">Revel <em>Pad</em></div>
+    <div class="seg" id="modeSeg" role="tablist" aria-label="Tool mode">
+      <button data-mode="scratch" class="on" role="tab" aria-selected="true">Scratch</button>
+      <button data-mode="restore" role="tab" aria-selected="false">Restore</button>
+    </div>
+    <div class="top-actions">
+      <button id="btnUndo" class="tbtn" title="Undo (Ctrl+Z)" aria-label="Undo">↩</button>
+      <button id="btnRedo" class="tbtn" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↪</button>
+      <span class="tsep"></span>
+      <button id="btnZoomOut" class="tbtn" title="Zoom out (-)">−</button>
+      <button id="btnZoomFit" class="tbtn zoom-level" title="Fit (0)"><span id="zoomLabel">100%</span></button>
+      <button id="btnZoomIn" class="tbtn" title="Zoom in (+)">+</button>
+      <button id="btnPan" class="tbtn" title="Pan tool (hold Space)">✥</button>
+      <span class="tsep"></span>
+      <button id="btnHelp" class="tbtn" title="Shortcuts (?)">?</button>
+      <button id="btnPanel" class="tbtn only-mobile" title="Panel">☰</button>
+    </div>
+  </header>
+
+  <aside id="sidebar">
+    <section class="panel-sec">
+      <h3>Artwork</h3>
+      <div class="pills" id="patternCats"></div>
+      <div class="thumb-grid" id="patternGrid"></div>
+      <div class="row">
+        <button id="btnUpload" class="btn ghost">Upload image</button>
+        <button id="btnReseed" class="btn ghost" title="New variation of this pattern">Reseed</button>
+      </div>
+      <input type="file" id="fileUpload" accept="image/*" hidden>
+    </section>
+
+    <section class="panel-sec">
+      <h3>Brush</h3>
+      <select id="shapeCat" class="select" aria-label="Brush category"></select>
+      <div class="shape-grid" id="shapeGrid"></div>
+    </section>
+
+    <section class="panel-sec">
+      <h3>Brush settings</h3>
+      <label class="slider-row"><span>Size <b id="sizeVal">90</b></span>
+        <input type="range" id="sizeSlider" min="6" max="320" value="90"></label>
+      <label class="slider-row"><span>Rotation <b id="rotVal">0°</b></span>
+        <input type="range" id="rotSlider" min="0" max="359" value="0"></label>
+      <label class="slider-row"><span>Smoothing <b id="smoothVal">14</b></span>
+        <input type="range" id="smoothSlider" min="2" max="48" value="14"></label>
+    </section>
+
+    <section class="panel-sec">
+      <h3>Effects</h3>
+      <label class="toggle-row"><span>Foil dust particles</span>
+        <button id="tglParticles" class="switch on" role="switch" aria-checked="true"><i></i></button></label>
+      <label class="toggle-row"><span>Scratch sounds</span>
+        <button id="tglSound" class="switch on" role="switch" aria-checked="true"><i></i></button></label>
+      <label class="toggle-row"><span>Autosave</span>
+        <button id="tglAutosave" class="switch on" role="switch" aria-checked="true"><i></i></button></label>
+    </section>
+
+    <section class="panel-sec">
+      <h3>Canvas</h3>
+      <div class="row">
+        <button id="btnResetFoil" class="btn danger-ghost">Reset foil</button>
+      </div>
+      <p class="hint">Reset covers the artwork with fresh foil. This can be undone.</p>
+    </section>
+
+    <section class="panel-sec">
+      <h3>Export</h3>
+      <div class="row">
+        <button id="btnDownload" class="btn solid">Download PNG</button>
+        <button id="btnCopy" class="btn ghost">Copy</button>
+      </div>
+    </section>
+  </aside>
+
+  <main id="stage">
+    <canvas id="pad"></canvas>
+    <div id="cursorRing" hidden></div>
+  </main>
+
+  <footer id="statusbar">
+    <span id="stShape">● Circle</span>
+    <span class="dot">·</span><span id="stMode">Scratch</span>
+    <span class="dot">·</span><span id="stSteps">0 strokes</span>
+    <span class="spacer"></span>
+    <span class="hint" id="stHint">drag to scratch · X toggles restore</span>
+  </footer>
+</div>
+
+<div id="helpModal" class="modal" hidden>
+  <div class="modal-card">
+    <h2>Shortcuts</h2>
+    <table>
+      <tr><td><kbd>X</kbd></td><td>Toggle scratch / restore</td></tr>
+      <tr><td><kbd>[</kbd> <kbd>]</kbd></td><td>Brush size</td></tr>
+      <tr><td><kbd>R</kbd> / <kbd>⇧R</kbd></td><td>Rotate brush ±15°</td></tr>
+      <tr><td><kbd>Ctrl Z</kbd> / <kbd>Ctrl ⇧ Z</kbd></td><td>Undo / redo</td></tr>
+      <tr><td><kbd>+</kbd> <kbd>−</kbd> <kbd>0</kbd></td><td>Zoom in / out / fit</td></tr>
+      <tr><td><kbd>Space</kbd> + drag</td><td>Pan</td></tr>
+      <tr><td><kbd>?</kbd></td><td>This panel</td></tr>
+    </table>
+    <button id="btnCloseHelp" class="btn solid">Done</button>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
