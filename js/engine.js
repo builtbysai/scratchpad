@@ -101,7 +101,7 @@ export class Studio {
     ctx.fillText('S C R A T C H   T O   R E V E A L', ART_W / 2, ART_H / 2);
     ctx.font = '400 20px Georgia, serif';
     ctx.globalAlpha = 0.35;
-    ctx.fillText('— revel pad —', ART_W / 2, ART_H / 2 + 52);
+    ctx.fillText('— scratchpad —', ART_W / 2, ART_H / 2 + 52);
     ctx.restore();
     this.strokes = [];
     this.redoStack = [];

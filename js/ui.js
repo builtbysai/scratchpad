@@ -6,7 +6,7 @@ import { mulberry32 } from './rng.js';
 import { setAudioEnabled } from './audio.js';
 
 const $ = (id) => document.getElementById(id);
-const AUTOSAVE_KEY = 'revel-pad-v1';
+const AUTOSAVE_KEY = 'scratchpad-v1';
 
 let studio = null;
 let autosaveOn = true;
@@ -176,7 +176,7 @@ function bindControls() {
     const blob = await studio.exportBlob();
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'revel-pad.png';
+    a.download = 'scratchpad.png';
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
     toast('PNG downloaded');
