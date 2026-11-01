@@ -195,7 +195,7 @@ function bindControls() {
   $('btnRedo').onclick = () => { studio.redo(); scheduleSave(); };
   $('btnZoomIn').onclick = () => zoomCenter(1.25);
   $('btnZoomOut').onclick = () => zoomCenter(0.8);
-  $('btnZoomFit').onclick = () => { studio.fitView(); updateStatus(); };
+  $('btnZoomFit').onclick = () => { studio.fitView(); updateStatus(); updateZoomLabel(); };
   $('btnPan').onclick = () => {
     panTool = !panTool;
     $('btnPan').classList.toggle('on', panTool);
@@ -344,7 +344,7 @@ function bindKeys() {
     else if (e.key.toLowerCase() === 'r') nudgeSlider('rotSlider', e.shiftKey ? -15 : 15, 0, 359);
     else if (e.key === '+' || e.key === '=') zoomCenter(1.25);
     else if (e.key === '-') zoomCenter(0.8);
-    else if (e.key === '0') { studio.fitView(); updateStatus(); }
+    else if (e.key === '0') { studio.fitView(); updateStatus(); updateZoomLabel(); }
     else if (e.key === '?') $('helpModal').hidden = !$('helpModal').hidden;
     else if (e.key === 'Escape') { $('helpModal').hidden = true; $('app').classList.remove('panel-open'); }
   });
@@ -415,7 +415,7 @@ export function boot() {
     updateStatus();
     updateZoomLabel();
   });
-  window.addEventListener('resize', () => studio.fitView());
+  window.addEventListener('resize', () => { studio.fitView(); updateZoomLabel(); });
 
   window.addEventListener('beforeunload', (e) => {
     if (studio.strokes.length > 0 && autosaveOn === false) {

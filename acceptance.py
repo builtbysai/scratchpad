@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 """Acceptance tests for Revel Pad: foil opacity, scratch erase, undo/redo,
 export, and registry render checks. Fails loudly on any miss."""
+import os
 from playwright.sync_api import sync_playwright
 
 BASE = "http://localhost:8129/"
-EXE = "/tmp/cft/chrome-headless-shell-linux64/chrome-headless-shell"
+EXE = os.environ.get("CHS_BIN", "/tmp/cft/chrome-headless-shell-linux64/chrome-headless-shell")
+if not os.path.exists(EXE):
+    # /tmp is a small tmpfs on some machines; fall back to the workspace install
+    alt = os.path.expanduser("~/workspace/cft/chrome-headless-shell-linux64/chrome-headless-shell")
+    if os.path.exists(alt):
+        EXE = alt
 fails = []
 
 def check(name, cond, extra=""):
@@ -133,7 +139,7 @@ with sync_playwright() as p:
       st.endStroke();
     }""")
     pg.wait_for_timeout(900)  # debounce 600ms
-    saved = pg.evaluate("!!localStorage.getItem('revel-pad-v1')")
+    saved = pg.evaluate("!!localStorage.getItem('scratchpad-v1')")
     check("autosave writes", saved)
     pg.reload(wait_until="networkidle")
     pg.wait_for_timeout(1500)

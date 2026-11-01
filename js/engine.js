@@ -39,6 +39,7 @@ export class Studio {
     this.strokes = [];
     this.undoStack = [];
     this.redoStack = [];
+    this.redoStrokes = [];
     this.activeStroke = null;
 
     this.view_ = { scale: 1, tx: 0, ty: 0 };
@@ -105,6 +106,7 @@ export class Studio {
     ctx.restore();
     this.strokes = [];
     this.redoStack = [];
+    this.redoStrokes = [];
     this.dirty = true;
     this.emit();
   }
@@ -141,6 +143,7 @@ export class Studio {
     this.undoStack.push(snap);
     if (this.undoStack.length > UNDO_CAP) this.undoStack.shift();
     this.redoStack = [];
+    this.redoStrokes = [];
   }
 
   beginStroke(wx, wy) {
@@ -221,7 +224,8 @@ export class Studio {
     this.fctx.clearRect(0, 0, ART_W, ART_H);
     this.fctx.drawImage(prev, 0, 0);
     this.fctx.restore();
-    this.strokes.pop();
+    const st = this.strokes.pop();
+    if (st) this.redoStrokes.push(st);
     this.dirty = true;
     this.emit();
     return true;
@@ -238,6 +242,8 @@ export class Studio {
     this.fctx.clearRect(0, 0, ART_W, ART_H);
     this.fctx.drawImage(next, 0, 0);
     this.fctx.restore();
+    const st = this.redoStrokes.pop();
+    if (st) this.strokes.push(st);
     this.dirty = true;
     this.emit();
     return true;
@@ -388,6 +394,7 @@ export class Studio {
     this.resetFoil(false);
     this.undoStack = [];
     this.redoStack = [];
+    this.redoStrokes = [];
     // replay strokes deterministically
     for (const st of data.strokes || []) {
       const rng = mulberry32(st.seed);
