@@ -292,12 +292,22 @@ kbd {
   }
   #app.panel-open #sidebar { transform: translateY(0); }
   .only-mobile { display: grid; }
-  #topbar { gap: 8px; padding: 0 10px; }
-  .top-actions { overflow-x: auto; scrollbar-width: none; }
+  #topbar { gap: 8px; padding: 0 10px; min-width: 0; }
+  #topbar .wordmark { flex: none; }
+  .top-actions { overflow-x: auto; scrollbar-width: none; min-width: 0; flex: 1; }
   .top-actions::-webkit-scrollbar { display: none; }
-  .tbtn { flex: none; }
+  .tbtn { flex: none; min-width: 40px; height: 40px; }
+  .tbtn.zoom-level { min-width: 60px; }
   #btnPanel { order: -1; border-color: var(--brass-lo); }
   #statusbar .hint { display: none; }
   .wordmark { font-size: 17px; }
   .seg button { padding: 7px 10px; font-size: 11px; }
+  .modal-card { min-width: 0; width: min(420px, calc(100vw - 40px)); }
+}
+
+/* ---------- very small phones: reclaim topbar space ---------- */
+@media (max-width: 480px) {
+  #topbar .wordmark { display: none; }
+  #topbar { gap: 6px; padding: 0 8px; }
+  .seg { flex: none; }
 }
